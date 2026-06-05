@@ -1,6 +1,49 @@
-import React from "react";
+import React, { useReducer } from "react";
+
+const initialState = {
+  bal: 0,
+  loan: 0,
+  open: false,
+  close: true,
+  isLoan: false,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "open":
+      return { bal: 500, open: true, close: false, loan: 0, isLoan: false };
+    case "deposit":
+      return { ...state, bal: state.bal + action.payload };
+    case "withdraw":
+      if (state.balance >= action.payload)
+        return { ...state, bal: state.bal - action.payload };
+    case "loan":
+      if (!isLoan && action.payload <= 10000) {
+        return {
+          ...state,
+          isLoan: true,
+          bal: state.bal + action.payload,
+          loan: action.payload,
+        };
+      }
+    case "payloan":
+      if (state.bal >= state.loan) {
+        return {
+          ...state,
+          loan: 0,
+          bal: state.bal - state.loan,
+          isLoan: false,
+        };
+      }
+    case "close":
+      if (state.bal === 0 && state.loan === 0) {
+        return initialState;
+      }
+  }
+}
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div className="body">
       <Detail />
